@@ -1,0 +1,11 @@
+{
+  "Name": "Sebastian Cabeza de Coco",
+  "Author": "mperafan",
+  "Version": "0.1.0",
+  "Description": "Sebastian occasionally calls you 'Cabeza de Coco'. Red hair & brown eyes coming soon.",
+  "UniqueID": "mperafan.SebastianCabezaDeCoco",
+  "UpdateKeys": [],
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher"
+  }
+}

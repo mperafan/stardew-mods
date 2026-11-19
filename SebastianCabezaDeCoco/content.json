@@ -1,0 +1,22 @@
+{
+  "Format": "2.0.0",
+  "Changes": [
+    {
+      "LogName": "Sebastian says Cabeza de Coco (random days)",
+      "Action": "EditData",
+      "Target": "Characters/Dialogue/Sebastian",
+      "When": {
+        "Random: yes, no, no |key=CabezaDeCoco": "yes"
+      },
+      "TextOperations": [
+        { "Operation": "Append", "Target": ["Entries", "Mon"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
+        { "Operation": "Append", "Target": ["Entries", "Tue"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
+        { "Operation": "Append", "Target": ["Entries", "Wed"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
+        { "Operation": "Append", "Target": ["Entries", "Thu"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
+        { "Operation": "Append", "Target": ["Entries", "Fri"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
+        { "Operation": "Append", "Target": ["Entries", "Sat"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
+        { "Operation": "Append", "Target": ["Entries", "Sun"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" }
+      ]
+    }
+  ]
+}

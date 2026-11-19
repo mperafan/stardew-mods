@@ -17,6 +17,12 @@
         { "Operation": "Append", "Target": ["Entries", "Sat"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" },
         { "Operation": "Append", "Target": ["Entries", "Sun"], "Value": "Cabeza de Coco.", "Delimiter": "#$b#" }
       ]
+    },
+    {
+      "LogName": "Sebastian red hair + brown eyes (sprites)",
+      "Action": "EditImage",
+      "Target": "Characters/Sebastian, Characters/Sebastian_Beach, Characters/Sebastian_Winter",
+      "FromFile": "assets/{{TargetWithoutPath}}.png"
     }
   ]
 }

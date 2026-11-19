@@ -221,3 +221,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Unpacked vanilla game assets (input for scripts/recolor.py) — not ours to commit
+raw/

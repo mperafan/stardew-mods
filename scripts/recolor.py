@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recolor Sebastian's walking sprites: red hair + brown eyes.
+"""Recolor Sebastian's walking sprites: red hair, brown eyes, faded-green clothes.
 
 Usage: python3 scripts/recolor.py <input.png> <output.png>
 
@@ -35,15 +35,30 @@ SHARED_IRIS = (70, 51, 108)
 SHARED_IRIS_BROWN = (88, 50, 26)
 
 
-def touches_eye_white(px, x, y, w, h):
+def touches(px, x, y, w, h, colors):
+    """True if any of the 4 neighbours of (x, y) has one of `colors`."""
     for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
         nx, ny = x + dx, y + dy
-        if 0 <= nx < w and 0 <= ny < h and px[nx, ny][:3] == EYE_WHITE:
+        if 0 <= nx < w and 0 <= ny < h and px[nx, ny][:3] in colors:
             return True
     return False
 
+
+def touches_eye_white(px, x, y, w, h):
+    return touches(px, x, y, w, h, {EYE_WHITE})
+
 # Dark-to-light red ramp the hair gets mapped onto.
 RED_RAMP = [(62, 8, 12), (112, 20, 18), (160, 40, 24), (204, 72, 36), (232, 112, 56)]
+
+
+# Dark-to-light faded olive/sage ramp for clothes.
+GREEN_RAMP = [(22, 28, 20), (40, 52, 36), (62, 78, 54), (90, 106, 74), (124, 138, 100), (162, 172, 136)]
+CLOTH_LUM_MAX = 120  # brightness of the lightest purple (winter scarf) -> top of ramp
+SHIRT = {(255, 255, 255): (200, 208, 176), (198, 198, 198): (152, 164, 128)}  # beach shirt
+KEEP = {(51, 32, 35)}  # shoes
+# Purple used as the outline of hands/legs. Next to skin it's an outline, not cloth.
+SKIN_OUTLINE = (91, 34, 86)
+SKIN_OUTLINE_NEW = (150, 74, 58)
 
 
 def luminance(c):
@@ -57,12 +72,18 @@ def is_hair_color(c):
     return luminance(c) < 75 and b >= g and r >= g
 
 
-def ramp(t):
-    """Interpolate RED_RAMP at t in [0, 1]."""
-    t = max(0.0, min(1.0, t)) * (len(RED_RAMP) - 1)
-    i = min(int(t), len(RED_RAMP) - 2)
+def is_cloth_color(c):
+    """Purples of any brightness (hoodie, pants, scarf): red & blue >= green."""
+    r, g, b = c[:3]
+    return b >= g and r >= g and luminance(c) < CLOTH_LUM_MAX + 10 and c[:3] not in KEEP
+
+
+def ramp(t, colors=RED_RAMP):
+    """Interpolate a color ramp at t in [0, 1]."""
+    t = max(0.0, min(1.0, t)) * (len(colors) - 1)
+    i = min(int(t), len(colors) - 2)
     f = t - i
-    a, b = RED_RAMP[i], RED_RAMP[i + 1]
+    a, b = colors[i], colors[i + 1]
     return tuple(round(a[k] + (b[k] - a[k]) * f) for k in range(3))
 
 
@@ -106,9 +127,17 @@ def main(src, dst):
                     elif p[:3] == SHARED_IRIS and touches_eye_white(
                             px, fx + x, fy + y, im.width, im.height):
                         px[fx + x, fy + y] = SHARED_IRIS_BROWN + (p[3],)
+                    elif y > chin and p[:3] == SKIN_OUTLINE and touches(
+                            px, fx + x, fy + y, im.width, im.height, SKIN):
+                        px[fx + x, fy + y] = SKIN_OUTLINE_NEW + (p[3],)
                     elif y <= chin and is_hair_color(p):
                         t = (luminance(p) - lo) / (hi - lo)
                         px[fx + x, fy + y] = ramp(t) + (p[3],)
+                    elif y > chin and p[:3] in SHIRT:
+                        px[fx + x, fy + y] = SHIRT[p[:3]] + (p[3],)
+                    elif is_cloth_color(p) and (y > chin or luminance(p) >= 75):
+                        t = luminance(p) / CLOTH_LUM_MAX
+                        px[fx + x, fy + y] = ramp(t, GREEN_RAMP) + (p[3],)
 
     im.save(dst)
     print(f"wrote {dst}")
